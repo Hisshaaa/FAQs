@@ -242,7 +242,107 @@ export default function FAQPage() {
             </div>
           </CardContent>
         </Card>
+ {/* Chatbot */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {!isChatOpen ? (
+          <Button
+            onClick={() => setIsChatOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-14 h-14 shadow-lg"
+          >
+            <Bot size={24} />
+          </Button>
+        ) : (
+          <Card className={`w-80 h-96 shadow-xl transition-all duration-300 ${isMinimized ? "h-12" : "h-96"}`}>
+            <CardHeader className="bg-blue-600 text-white p-3 rounded-t-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Bot size={20} />
+                  <span className="font-medium">Support Assistant</span>
+                </div>
+                <div className="flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsMinimized(!isMinimized)}
+                    className="text-white hover:bg-blue-700 p-1 h-6 w-6"
+                  >
+                    <Minimize2 size={14} />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsChatOpen(false)}
+                    className="text-white hover:bg-blue-700 p-1 h-6 w-6"
+                  >
+                    <X size={14} />
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
 
+            {!isMinimized && (
+              <>
+                <CardContent className="flex-1 p-4 h-64 overflow-y-auto">
+                  <div className="space-y-4">
+                    {messages.map((message) => (
+                      <div key={message.id} className={`flex ${message.isBot ? "justify-start" : "justify-end"}`}>
+                        <div
+                          className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
+                            message.isBot ? "bg-gray-100 text-gray-800" : "bg-blue-600 text-white"
+                          }`}
+                        >
+                          <div className="whitespace-pre-line">{message.text}</div>
+                          <div className={`text-xs mt-1 ${message.isBot ? "text-gray-500" : "text-blue-100"}`}>
+                            {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    {isTyping && (
+                      <div className="flex justify-start">
+                        <div className="bg-gray-100 px-3 py-2 rounded-lg text-sm">
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div
+                              className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                              style={{ animationDelay: "0.1s" }}
+                            ></div>
+                            <div
+                              className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                              style={{ animationDelay: "0.2s" }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+                </CardContent>
+
+                <div className="p-3 border-t">
+                  <div className="flex gap-2">
+                    <Input
+                      value={inputMessage}
+                      onChange={(e) => setInputMessage(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Type your question..."
+                      className="flex-1"
+                    />
+                    <Button
+                      onClick={handleSendMessage}
+                      disabled={!inputMessage.trim() || isTyping}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      <Send size={16} />
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
+          </Card>
+        )}
+      </div>
         {/* Footer */}
         <div className="text-center mt-8 text-gray-500 text-sm">
           <p>© 2024 CardBiz Support Center. All rights reserved.</p>
